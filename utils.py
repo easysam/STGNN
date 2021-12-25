@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 
@@ -89,10 +90,27 @@ def loadData(args):
     return (trainX, trainTE, trainY, valX, valTE, valY, testX, testTE, testY,
             SE, mean, std)
 
-def loadPEMSData(args):
-    # Traffic
-    # Traffic = np.squeeze(np.load(args.traffic_file)['data'], -1)
-    Traffic = pd.read_hdf('pems-bay.h5')
+
+def loadPEMSData(args, data_path='db/TelecomMI/internet.csv'):
+    """
+    Load dataset.
+    Args:
+        args:
+        data_path: available dataset are
+            PEMS-BAY: 'pems-bay.h5'
+            TelecomMI: 'db/TelecomMI/internet.csv'
+
+    Returns:
+
+    """
+    _, file_extension = os.path.splitext(data_path)
+    if file_extension == '.h5':
+        Traffic = pd.read_hdf(data_path)
+    elif file_extension == '.csv':
+        # read cellular traffic data, assuming there is a "ts" index
+        Traffic = pd.read_csv(data_path, index_col='ts')
+    else:
+        raise NotImplementedError
     # Traffic = load_partition(args, Traffic)
     print(Traffic.shape)
     # train/val/test 
